@@ -1,11 +1,10 @@
 ## Activity 7: Topic Modeling with quanteda and seededlda packages
 # See documentation: https://tutorials.quanteda.io/machine-learning/topicmodel/ 
 
-install.packages("quanteda.corpora")
 install.packages("seededlda")
-
 library(readtext)
 library(quanteda)
+library(quanteda.textmodels)
 library(seededlda)
 library(tidyverse)
 
@@ -15,16 +14,22 @@ library(tidyverse)
 
 ted_talks <- readtext("ted_talks17.csv", text_field = "transcript", encoding = "utf8")
 
-# 2. Create a corpus from the ted_talks dataframe using the quanteda corpus() function.
+# 2. Create a corpus and tokens from the ted_talks data
 
 ted_corp <- corpus(ted_talks)
 print(ted_corp)
 
+ted_tokens <- tokens(ted_corp, remove_punct = TRUE, remove_numbers = TRUE) %>%
+  tokens_remove(stopwords("en")) %>%
+  tokens_tolower() %>%
+  tokens_wordstem()  
+
+
 # 3. Create a dfm from the corpus. Use arguments in the function to clean the text as part of creating the dfm.
 
-ted_dfm <- dfm(ted_corp, remove_punct = TRUE, remove_numbers = TRUE, stem=TRUE, remove = stopwords("english"))
+ted_dfm <- dfm(ted_tokens)
 
-ted_dfm
+View(as.data.frame(ted_dfm))
 
 # 4. Run your topic model. LDA (Latent Dirichlet Allocation) is a probabilistic modeling approach that assumes every word in
 # a document belongs to some 'unknown' topic.
