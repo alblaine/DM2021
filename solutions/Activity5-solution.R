@@ -40,14 +40,19 @@ docs$name <- docs$name %>%
 View(tail(docs, 30))
 
 
-# 5. Create a corpus of the texts.
+# 5. Create a corpus of the texts and then tokenize the corpus.
 
 docs_corp <- corpus(docs)
+
+docs_tokens <- tokens(docs_corp, remove_punct = TRUE, remove_numbers = TRUE) %>%
+  tokens_remove(stopwords("en")) %>%
+  tokens_tolower() %>%
+  tokens_wordstem()
 
 ## Use TF-IDF to see what terms are most unique & important to a document.
 
 # 6. Create a document feature matrix (dfm)
-sotu_dfm <- dfm(docs_corp, remove_punct = TRUE, remove_numbers = TRUE,  remove = stopwords("english"), tolower=T)
+sotu_dfm <- dfm(docs_tokens)
 
 
 # 7. Construct a tf-idf on a dfm to determine a document's most distinctive words
@@ -55,13 +60,13 @@ sotu_tf_idf <- dfm_tfidf(sotu_dfm)
 
 
 # 8. See most distinctive words for Obama's 2011 SOTU address (# 3 in the list):
-
 topfeatures(sotu_tf_idf[3,])
 
-# 9. Print out a list of each speech's most disttinctive terms.
+# 9. Print out a list of each speech's most distinctive terms.
 i <- 0
-for(i in 1:length(docs)) {
-  print(docvars(sotu_tf_idf[i,]))
+for(i in 1:nrow(docs)) {
+  print('-------')
+  print(paste('#', i, docvars(sotu_tf_idf[i,])$name, '--', docvars(sotu_tf_idf[i,])$year))
   print(topfeatures(sotu_tf_idf[i,]))
   
 }
@@ -75,15 +80,20 @@ for(i in 1:length(docs)) {
 ted_talks <- readtext("ted_talks17.csv", text_field = "transcript", encoding="utf8")
 ted_corp <- corpus(ted_talks)
 
-# 12. Create a dfm as in step 6.
-ted_dfm <- dfm(ted_corp, remove_punct = TRUE, remove_numbers = TRUE,  remove = stopwords("english"), tolower=T)
+# 12. Create tokens from the corpus and then a dfm as in steps 5 & 6.
+ted_tokens <- tokens(ted_corp, remove_punct = TRUE, remove_numbers = TRUE) %>%
+  tokens_remove(stopwords("en")) %>%
+  tokens_tolower() %>%
+  tokens_wordstem()
+  
+ted_dfm <- dfm(ted_tokens)
 
 # 13. Construct a tf-idf for each talk as in step 7.
 ted_tf_idf <- dfm_tfidf(ted_dfm)
 
 # 14. Print out the most distinctive terms for each talk.
 i <- 0
-for(i in 1:length(ted_talks)) {
+for(i in 1:nrow(ted_talks)) {
   print(docvars(ted_tf_idf[i,])$headline)
   print(topfeatures(ted_tf_idf[i,]))
   
