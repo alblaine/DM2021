@@ -15,9 +15,13 @@ reviews_corp <- corpus(reviews)
 ################ 
 
 
-# 1. Convert corpus to a document feature matrix (dfm).
+# 1. Convert corpus to a tokens object and then a document feature matrix (dfm).
 
-reviews_dfm <- dfm(reviews_corp, remove = stopwords(language="en"), remove_punct=TRUE, remove_numbers=TRUE)
+reviews_tokens <- tokens(reviews_corp, remove_numbers = TRUE,  remove_punct = TRUE, remove_symbols = TRUE) %>%
+  tokens_remove(stopwords("en")) %>%
+  tokens_tolower()
+
+reviews_dfm <- dfm(reviews_tokens)
 
 
 # 2. Turn dfm into a tidy dataframe. A tidy data frame means one variable per column, one observation per row, one value per cell.
@@ -67,8 +71,10 @@ barplot(term_frequency$freq[1:num], names.arg = term_frequency$term[1:num], las=
 
 
 
-# 11. Practice. Create a dfm from the corpus of tweets created in the last activity. 
-#tweets_corp <- corpus(tweets)
+# 11. Practice. Create tokens from the corpus of tweets created in the last activity and then create a dfm from the tokens. 
+# tweets <- readtext("tweets.csv", text_field = "text", encoding = "utf8")
+# tweets_corp <- corpus(tweets)
+tweets_tokens <- 
 tweets_dfm <- 
   
 # 12. Practice. Create a tidy data frame from the dfm.
