@@ -1,10 +1,13 @@
 ## Activity 6: Do other types of analysis using the quanteda package on SOTU speeches: 
 # tokenization, n-grams, word collocations, lexical diversity, keywords in context, etc.
 
+install.packages('quanteda.textstats')
+install.packages('quanteda.textplots')
 library(readtext)
 library(tidyverse)
 library(quanteda)
-
+library(quanteda.textstats)
+library(quanteda.textplots)
 
 ####################### Skip this setup section in class ###############################
 
@@ -40,9 +43,9 @@ docs_corp
 obama_corpus <- corpus_subset(docs_corp, name=="barack obama")
 
 # 3. Clean the tokens. This time, let's leave punctuation in.
-obama_toks <- tokens(obama_corpus, remove_numbers = TRUE, remove_punct = TRUE)
-obama_toks <- tokens_remove(obama_toks, pattern = stopwords("english"), padding=TRUE)
-obama_toks <- tokens_tolower(obama_toks)
+obama_toks <- tokens(obama_corpus, remove_numbers = TRUE, remove_punct = TRUE) %>%
+  tokens_remove(pattern = stopwords("english"), padding=TRUE) %>%
+  tokens_tolower()
 
 # 4. Stem the tokens
 stemmed_obama_toks <- tokens_wordstem(obama_toks, language = quanteda_options("language_stemmer"))
@@ -61,9 +64,9 @@ topfeatures(dfm(obama_bigrams), 20)
 # Clean the tokens. Do not stem.
 fdr_corpus <- corpus_subset(docs_corp, name=="franklin d roosevelt")
 
-fdr_toks <- tokens(fdr_corpus, remove_numbers = TRUE, remove_punct = TRUE)
-fdr_toks <- tokens_remove(fdr_toks, pattern = stopwords("english"), padding=TRUE)
-fdr_toks <- tokens_tolower(fdr_toks)
+fdr_toks <- tokens(fdr_corpus, remove_numbers = TRUE, remove_punct = TRUE) %>%
+            tokens_remove(pattern = stopwords("english"), padding=TRUE) %>%
+            tokens_tolower()
 
 fdr_toks
 
@@ -112,7 +115,7 @@ fdr_coll_2 %>%
 ## III. Keywords in Context: What words immediately precede and follow terms of interest
 
 # 14. Create a keyword in context (kwic) list
-obama_kwic_list <- kwic(obama_corpus, pattern=c("immigration", "jobs", "health", "energy"))
+obama_kwic_list <- kwic(obama_toks, pattern=c("immigration", "jobs", "health", "energy"))
 View(obama_kwic_list)
 
 # 15. You can also make a kwic list out n-grams, such as bigrams. For the pattern to search, type "health_care"
@@ -128,8 +131,8 @@ textplot_xray(obama_kwic_list)
 textplot_xray(obama_hc_kwic) 
 
 
-# 18. Practice. Create a kwic list for the FDR corpus and look for the pattern "war".
-fdr_war_kwic <- kwic(fdr_corpus, pattern="war")  
+# 18. Practice. Create a kwic list from the tokenized FDR speeches (fdr_toks and look for the pattern "war".
+fdr_war_kwic <- kwic(fdr_toks, pattern="war")  
 
 # 19. Practice. Create a lexical dispersion plot from the FDR kwic list you just created.
 textplot_xray(fdr_war_kwic)
@@ -154,9 +157,9 @@ reagan_corpus <- corpus_subset(docs_corp, name=="ronald reagan")
 
 
 # 23. Practice. Tokenize the Reagan corpus. Remove stopwords, numbers, and convert to lowercase.
-reagan_toks <- tokens(reagan_corpus, remove_numbers = TRUE)
-reagan_toks <- tokens_remove(reagan_toks, pattern = stopwords("english"), padding=TRUE)
-reagan_toks <- tokens_tolower(reagan_toks)
+reagan_toks <- tokens(reagan_corpus, remove_numbers = TRUE) %>%
+              tokens_remove(reagan_toks, pattern = stopwords("english"), padding=TRUE) %>%
+              tokens_tolower(reagan_toks)
 
 reagan_toks
 
@@ -175,7 +178,7 @@ View(reagan_coll_3)
 
 # VII. Chaining functions together to perform multiple operations.
 
-# 25. Here is an example of how to use function chaining to tokenize and clean a corpus:
+# 25. Here's a slightly different version of function chaining to tokenize and clean a corpus:
 obama_toks <- obama_corpus %>%
   tokens(., remove_numbers = TRUE) %>%
   tokens_remove(., pattern = stopwords("english"), padding=TRUE) %>%
