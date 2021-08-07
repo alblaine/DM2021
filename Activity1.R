@@ -1,4 +1,4 @@
-## Data Matters 2020: Text Analysis with R
+## Data Matters 2021: Text Analysis with R
 ## Activity 1: Read in one text file with metadata and explore it in R
 
 # 1. Read structured text data from a file into R with the readtext package.
@@ -22,8 +22,8 @@ names(reviews)
 # 6. Use str() to see the structure of the dataset and attributes of each column
 str(reviews)
 
-# 7. Use $ to look at the contents of a column of data. Look at reviews.text
-reviews$reviews.text
+# 7. Use $ to look at the contents of a column of data. Look at reviews.title
+reviews$reviews.title
 
 # 8. Use unique() to see unique values in a categorical data column, such as city
 unique(reviews$city)

@@ -17,16 +17,25 @@ rf_poem
 rf_corp <- corpus(rf_poem)
 rf_corp
 
+# 5. Tokenize and clean the corpus. Tokenization splits the corpus into units, such as words, for analysis.
+rf_toks <- tokens(rf_corp, remove_punct = TRUE) %>%
+  tokens_remove(stopwords("en")) %>%
+  tokens_tolower() %>%
+  tokens_wordstem()
 
-# 5. Create a document feature matrix (dfm) from the corpus.
-rf_dfm <- dfm(rf_corp, remove_punct = TRUE, tolower=T)
+# 6. Create a document feature matrix (dfm) from the tokens.
+rf_dfm <- dfm(rf_toks)
 
 View(convert(rf_dfm, to='data.frame'))
 
-# 6. Practice. Read in the Emily Dickinson poem from "dickinson.csv" using readtext() like in step 3.
+# 7. Practice. Read in the Emily Dickinson poem from "dickinson.csv" using readtext() like in step 3.
 ed_poem <- 
 
-# 7. Create a corpus like in step 4.
+# 8. Create a corpus like in step 4.
 
 
-# 8. Create a document feature matrix (dfm) from the corpus like in step 5.
+# 9. Tokenize and clean the corpus.
+
+    
+# 10. Create a document feature matrix (dfm) from the tokens like in step 6.
+
