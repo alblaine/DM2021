@@ -1,9 +1,13 @@
 ## Activity 6: Do other types of analysis using the quanteda package on SOTU speeches: 
 # tokenization, n-grams, word collocations, lexical diversity, keywords in context, etc.
 
+install.packages('quanteda.textstats')
+install.packages('quanteda.textplots')
 library(readtext)
 library(tidyverse)
 library(quanteda)
+library(quanteda.textstats)
+library(quanteda.textplots)
 
 
 ####################### Skip this setup section in class ###############################
@@ -40,9 +44,9 @@ docs_corp
 obama_corpus <- corpus_subset(docs_corp, name=="barack obama")
 
 # 3. Clean the tokens. This time, let's leave punctuation in.
-obama_toks <- tokens(obama_corpus, remove_numbers = TRUE, remove_punct = TRUE)
-obama_toks <- tokens_remove(obama_toks, pattern = stopwords("english"), padding=TRUE)
-obama_toks <- tokens_tolower(obama_toks)
+obama_toks <- tokens(obama_corpus, remove_numbers = TRUE, remove_punct = TRUE) %>%
+              tokens_remove(pattern = stopwords("english"), padding=TRUE) %>%
+              tokens_tolower()
 
 # 4. Stem the tokens
 stemmed_obama_toks <- tokens_wordstem(obama_toks, language = quanteda_options("language_stemmer"))
@@ -62,10 +66,7 @@ topfeatures(dfm(obama_bigrams), 20)
 fdr_corpus <- 
 
 fdr_toks <- 
-fdr_toks <- 
-fdr_toks <- 
 
-fdr_toks
 
 # 8. Practice. Turn the FDR tokens into bigrams and look at top 20 most frequest bigrams.
 
@@ -109,7 +110,7 @@ fdr_coll_2 %>%
 ## III. Keywords in Context: What words immediately precede and follow terms of interest
 
 # 14. Create a keyword in context (kwic) list
-obama_kwic_list <- kwic(obama_corpus, pattern=c("immigration", "jobs", "health", "energy"))
+obama_kwic_list <- kwic(obama_toks, pattern=c("immigration", "jobs", "health", "energy"))
 View(obama_kwic_list)
 
 # 15. You can also make a kwic list out n-grams, such as bigrams. For the pattern to search, type "health_care"
@@ -125,7 +126,7 @@ textplot_xray(obama_kwic_list)
 
 
 
-# 18. Practice. Create a kwic list for the FDR corpus and look for the pattern "war".
+# 18. Practice. Create a kwic list from the FDR speeches (fdr_toks) and look for the pattern "war".
 fdr_war_kwic <- 
 
 # 19. Practice. Create a lexical dispersion plot from the FDR kwic list you just created.
@@ -134,6 +135,16 @@ fdr_war_kwic <-
 
 ## V. Lexical diversity: a measure of how many different words are used in a text
 # Task: Rank the lexical diversity of all of the SOTU speeches
+##### Setup for this task from Activity 5:
+docs_corp <- corpus(docs)
+
+docs_tokens <- tokens(docs_corp, remove_punct = TRUE, remove_numbers = TRUE) %>%
+  tokens_remove(stopwords("en")) %>%
+  tokens_tolower() %>%
+  tokens_wordstem()
+
+sotu_dfm <- dfm(docs_tokens)
+######
 
 # 20. Compute the lexical diversity score of each document using the sotu_dfm
 lex_diversity_score <- textstat_lexdiv(sotu_dfm)
@@ -152,8 +163,6 @@ reagan_corpus <-
 
 # 23. Practice. Tokenize the Reagan corpus. Remove stopwords, numbers, and convert to lowercase.
 reagan_toks <- 
-reagan_toks <- 
-reagan_toks <- 
 
 
 # 24. Practice. Look at term collocations (2 terms and 3 terms) using the tokens object.
@@ -165,7 +174,7 @@ reagan_coll_3 <-
 
 # VII. Chaining functions together to perform multiple operations.
 
-# 25. Here is an example of how to use function chaining to tokenize and clean a corpus:
+# 25. Here's a slightly different version of function chaining to tokenize and clean a corpus:
 obama_toks <- obama_corpus %>%
   tokens(., remove_numbers = TRUE) %>%
   tokens_remove(., pattern = stopwords("english"), padding=TRUE) %>%
