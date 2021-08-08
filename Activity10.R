@@ -34,7 +34,7 @@ training_dfm <- corpus_subset(tweets_corp, id_numeric %in% id_train) %>%
   dfm()
 
 # 5. Create a test set (documents not in id_train).
-test_tokens <- corpus_subset(tweets_corp, !id_numeric %in% id_train) %>%
+test_dfm <- corpus_subset(tweets_corp, !id_numeric %in% id_train) %>%
   tokens(remove_punct = TRUE, remove_symbols = TRUE, remove_numbers = TRUE) %>%
   tokens_tolower() %>%
   dfm()
