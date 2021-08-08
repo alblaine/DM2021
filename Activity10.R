@@ -12,6 +12,7 @@ library(caret)
 
 
 # 1. For this activity we will use the airline tweets dataset.
+# Set working directory to main folder first
 
 tweets <- readtext("tweets.csv", text_field = "text", encoding="utf8")
 tweets_corp <- corpus(tweets)
@@ -26,13 +27,17 @@ head(id_train, 10)
 # 3. Create an id field with a unique number as an id.
 tweets_corp$id_numeric <- 1:ndoc(tweets_corp)
 
-# 4. Create a training set.
+# 4. Create a training set. Notice we're adding dfm() to our function chain, a more advanced technique.
 training_dfm <- corpus_subset(tweets_corp, id_numeric %in% id_train) %>%
-  dfm(remove = stopwords("en"), remove_punct = TRUE, tolower=TRUE)
+  tokens(remove_punct = TRUE, remove_symbols = TRUE, remove_numbers = TRUE) %>%
+  tokens_tolower() %>%
+  dfm()
 
 # 5. Create a test set (documents not in id_train).
-test_dfm <- corpus_subset(tweets_corp, !id_numeric %in% id_train) %>%
-  dfm(remove = stopwords("en"), remove_punct = TRUE, tolower=TRUE)
+test_tokens <- corpus_subset(tweets_corp, !id_numeric %in% id_train) %>%
+  tokens(remove_punct = TRUE, remove_symbols = TRUE, remove_numbers = TRUE) %>%
+  tokens_tolower() %>%
+  dfm()
 
 # 6. Train the model.
 tmod_nb <- textmodel_nb(training_dfm, training_dfm$airline_sentiment)
@@ -52,6 +57,8 @@ confusionMatrix(tab_class, mode = "everything")
 
 
 # II. Practice. Try to predict political party of speeches using Naive Bayes Classifier
+
+# Set working directory to sotu-addresses folder first
 
 # 10. Practice. Create a corpus subset of SOTU addresses from the 20th century. starting with FDR.
 corpus20 <- corpus_subset(docs_corp, year >= 1934 & year <=2000)
