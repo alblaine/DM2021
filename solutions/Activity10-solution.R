@@ -12,13 +12,13 @@ library(caret)
 
 
 # 1. For this activity we will use the airline tweets dataset.
+# Set working directory to main folder first
 
 tweets <- readtext("tweets.csv", text_field = "text", encoding="utf8")
 tweets_corp <- corpus(tweets)
 summary(tweets_corp, 5)
 
 # 2. Get a random sample of 800 tweets from the dataset
-
 set.seed(300)
 id_train <- sample(1:1000, 800, replace = FALSE)
 head(id_train, 10)
@@ -26,13 +26,17 @@ head(id_train, 10)
 # 3. Create an id field with a unique number as an id.
 tweets_corp$id_numeric <- 1:ndoc(tweets_corp)
 
-# 4. Create a training set.
+# 4. Create a training set. Notice we're adding dfm() to our function chain, a more advanced technique.
 training_dfm <- corpus_subset(tweets_corp, id_numeric %in% id_train) %>%
-  dfm(remove = stopwords("en"), remove_punct = TRUE, tolower=TRUE)
+  tokens(remove_punct = TRUE, remove_symbols = TRUE, remove_numbers = TRUE) %>%
+  tokens_tolower() %>%
+  dfm()
 
 # 5. Create a test set (documents not in id_train).
-test_dfm <- corpus_subset(tweets_corp, !id_numeric %in% id_train) %>%
-  dfm(remove = stopwords("en"), remove_punct = TRUE, tolower=TRUE)
+test_tokens <- corpus_subset(tweets_corp, !id_numeric %in% id_train) %>%
+  tokens(remove_punct = TRUE, remove_symbols = TRUE, remove_numbers = TRUE) %>%
+  tokens_tolower() %>%
+  dfm()
 
 # 6. Train the model.
 tmod_nb <- textmodel_nb(training_dfm, training_dfm$airline_sentiment)
@@ -53,6 +57,8 @@ confusionMatrix(tab_class, mode = "everything")
 
 # II. Practice. Try to predict political party of speeches using Naive Bayes Classifier
 
+# Set working directory to sotu-addresses folder first
+
 # 10. Practice. Create a corpus subset of SOTU addresses from the 20th century. starting with FDR.
 corpus20 <- corpus_subset(docs_corp, year >= 1934 & year <=2000)
 
@@ -70,11 +76,15 @@ corpus20$id_numeric <- 1:ndoc(corpus20)
 
 # 14. Practice. Create a training set.
 training_dfm <- corpus_subset(corpus20, id_numeric %in% id_train) %>%
-  dfm(remove = stopwords("en"), remove_punct = TRUE, tolower=TRUE)
-
+  tokens(remove_punct = TRUE, remove_symbols = TRUE, remove_numbers = TRUE) %>%
+  tokens_tolower() %>%
+  dfm()  
+  
 # 15. Practice. Create a test set (documents not in id_train).
 test_dfm <- corpus_subset(corpus20, !id_numeric %in% id_train) %>%
-  dfm(remove = stopwords("en"), remove_punct = TRUE, tolower=TRUE)
+  tokens(remove_punct = TRUE, remove_symbols = TRUE, remove_numbers = TRUE) %>%
+  tokens_tolower() %>%
+  dfm()  
 
 # 16. Practice. Train the model. Make sure to point to the 'party' column.
 tmod_nb <- textmodel_nb(training_dfm, training_dfm$party)
