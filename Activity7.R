@@ -41,6 +41,8 @@ terms(tmod_lda, 10)
 
 # 5. Practice. Now create a new Ted Talks dfm without stemming and re-run the model. What differences do you notice?
 
+ted_tokens_ns <- 
+  
 ted_dfm_ns <- 
 
 tmod_lda_ns <- 
