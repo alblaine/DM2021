@@ -5,7 +5,7 @@ rest_reviews <- readtext('Restaurant_Reviews.tsv')
 
 # I. Sentiment Analysis (see Activity 3)
 # 1. What review has the most positive terms?
-# 2. What is the most negative terms?
+# 2. What review has the most negative terms?
 
 
 # II. Collocations (see Activity 6)
